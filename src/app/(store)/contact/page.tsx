@@ -1,4 +1,7 @@
+import Link from "next/link";
 import { FadeIn, Reveal } from "@/components/motion";
+import { Faq } from "@/components/Faq";
+import { contactFaq } from "@/lib/faq";
 
 export const metadata = {
   title: "Contact",
@@ -11,43 +14,74 @@ const field =
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto max-w-5xl px-5 md:px-8 py-16 md:py-24 grid md:grid-cols-2 gap-16">
-      <FadeIn>
-        <p className="text-[11px] tracking-[0.28em] uppercase text-ink/60">Studio</p>
-        <h1 className="serif-display text-5xl md:text-6xl mt-3">Write to the house</h1>
-        <p className="mt-8 text-ink/65 leading-relaxed max-w-sm">
-          Appointments, alterations, and private fittings. We answer within two working
-          days.
-        </p>
-        <div className="gold-rule my-10" />
-        <div className="space-y-4 text-sm">
-          <p>hello@sipsonlevon.com</p>
-          <p>Ikeja, Lagos</p>
-          <p className="text-ink/60">Tue–Sat · 11:00–18:00 WAT</p>
-        </div>
-      </FadeIn>
-      <Reveal delay={0.12}>
-        <form className="space-y-4">
-          <input name="name" required placeholder="Name" aria-label="Name" className={field} />
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="Email"
-            aria-label="Email"
-            className={field}
-          />
-          <textarea
-            name="note"
-            rows={6}
-            placeholder="How can we help?"
-            aria-label="Message"
-            className={field}
-          />
-          <button className="bg-ink text-paper px-8 py-3.5 text-[11px] tracking-[0.24em] uppercase transition-colors hover:bg-ink/85">
-            Send
-          </button>
-        </form>
+    <div className="mx-auto max-w-5xl px-5 md:px-8 py-16 md:py-24">
+      <div className="grid md:grid-cols-2 gap-16">
+        <FadeIn>
+          <p className="text-[11px] tracking-[0.28em] uppercase text-ink/60">Studio</p>
+          <h1 className="serif-display text-5xl md:text-6xl mt-3">Write to the house</h1>
+          <p className="mt-8 text-ink/70 leading-relaxed max-w-sm">
+            Appointments, alterations, and private fittings. We answer within two working
+            days.
+          </p>
+          <div className="gold-rule my-10" />
+          <div className="space-y-4 text-sm">
+            <p>hello@sipsonlevon.com</p>
+            <p>Ikeja, Lagos</p>
+            <p className="text-ink/60">Tue–Sat · 11:00–18:00 WAT</p>
+          </div>
+        </FadeIn>
+
+        <Reveal delay={0.12}>
+          <form className="space-y-4">
+            <input name="name" required placeholder="Name" aria-label="Name" className={field} />
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="Email"
+              aria-label="Email"
+              className={field}
+            />
+            <textarea
+              name="note"
+              rows={6}
+              placeholder="How can we help?"
+              aria-label="Message"
+              className={field}
+            />
+            <button className="bg-ink text-paper px-8 py-3.5 text-[11px] tracking-[0.24em] uppercase transition-colors hover:bg-ink/85">
+              Send
+            </button>
+          </form>
+        </Reveal>
+      </div>
+
+      {/* Answers first: most enquiries are already covered here, and reading
+          one is faster for the customer than waiting two working days. */}
+      <Reveal delay={0.08}>
+        <section className="mt-20 md:mt-28">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <div>
+              <p className="text-[11px] tracking-[0.28em] uppercase text-ink/60">
+                Before you write
+              </p>
+              <h2 className="serif-display text-4xl md:text-5xl mt-3">
+                We may have answered it
+              </h2>
+            </div>
+            <Link
+              href="/faq"
+              className="rule-draw shrink-0 text-[11px] tracking-[0.22em] uppercase"
+            >
+              All questions
+            </Link>
+          </div>
+          <div className="mt-10">
+            {/* Collapsed by default so it supports the form rather than
+                competing with it. */}
+            <Faq items={contactFaq} defaultOpen={null} />
+          </div>
+        </section>
       </Reveal>
     </div>
   );

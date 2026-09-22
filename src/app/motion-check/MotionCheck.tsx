@@ -10,6 +10,8 @@ export function MotionCheck() {
   const [checks, setChecks] = useState<Check[]>([]);
 
   useEffect(() => {
+    // After paint: computed animation values are not final before it.
+    const frame = requestAnimationFrame(() => {
     const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Read what the browser actually computed for the hero's animation.
@@ -53,6 +55,8 @@ export function MotionCheck() {
         ok: parseFloat(tDur) > 0.05,
       },
     ]);
+    });
+    return () => cancelAnimationFrame(frame);
   }, [reduce]);
 
   const blocked = checks.some((c) => c.label.startsWith("OS") && c.ok === false);
