@@ -1,0 +1,312 @@
+
+PRODUCT REQUIREMENTS DOCUMENT
+SIPSONLEVON
+House Storefront & Atelier Operations Platform
+Version 1.0  ·  21 September 2026  ·  Status: Build in progress  ·  Classification: Internal
+Owner: House / Founder  ·  Product: Next.js App Router web application  ·  Market: Nigeria, luxury ready-to-wear
+1. Purpose of this document
+This document is the single source of truth for SIPSONLEVON’s digital house: what the product is, who it serves, how every customer surface works, how the hidden atelier (admin) operates, what is already built, and what must be true before the site is treated as production. It is written for the founder, a designer, an engineer, and a future operator who was not in the room when the first version was cut.
+It covers both a Product Requirements Document (why and what) and a System Document (how it actually works today). Where the live build differs from the target state, the gap is named in Section 12.
+2. Product vision
+2.1 The house
+SIPSONLEVON is a Lagos-cut ready-to-wear house. The clothes are few, expensive, and honest about stock. The website must feel like walking into that house: ivory paper, black type, champagne gold, serif wordmark, almost no chrome. It must never feel like Shopify-default, a marketplace, or a staff tool that leaked onto the street.
+2.2 The digital product
+A complete multi-page commerce web app — not a landing page. Customers shop, bag, and check out. The house takes the order, stock comes off the rail immediately, and staff manage catalogue, inventory, and order status in a separate dark atelier that customers are never told exists.
+2.3 Non-goals
+A single-page brochure with a WhatsApp button as the only checkout.
+A public “staff” or “atelier” link in the header or footer.
+Marketplace multi-vendor behaviour.
+Social feeds, blogs, or discount-code theatre on v1.
+Customer accounts on v1 (order confirmation by ID is enough).
+3. Problem and opportunity
+A small luxury house in Lagos cannot run stock on a spreadsheet and Instagram DMs if it wants to look like a house that will last. Customers need to see what is actually available, in which size, at a price in naira, and complete an order without chatting a sales person. The founder needs one ledger: products, units by size, orders, status. If those two worlds share a UI, the house looks like a warehouse. So the product splits: a quiet public house, and a private operations desk.
+4. Users and jobs to be done
+Actor
+Job
+Success looks like
+Guest shopper
+Understand the house and decide if the clothes are for them
+They stay on the hero, open Lookbook or Shop, do not hunt for a login
+Buyer
+Find a piece, pick a size that exists, pay / place order, get a number
+Bag updates, checkout takes details, confirmation page shows SL-xxxx
+Private client
+Ask for a fitting or alteration without buying online
+Contact form exists; studio email is visible
+Founder / buyer
+Add or edit a piece, set stock by size, see what is low
+Admin products + inventory, no code required
+Studio operator
+See new orders and move them paid → processing → shipped → delivered
+Admin orders list with status control
+5. Brand and UX principles
+Restraint. Fewer modules. No badges except Sold through or Archive price.
+Honesty. Listed stock is real stock. Sold-through sizes are disabled, not hidden with a lie.
+Separation. Customer chrome never mentions admin, atelier desk, ledger, SKU, or dashboard.
+Lagos as origin, not costume. Copy is English, prices are NGN, delivery promise is national.
+Type hierarchy. Cormorant / Garamond for names and headlines. Outfit / Calibri-like sans for UI.
+Paper and ink. Background #F4EFE6, ink #14110E, gold #B89563. Admin inverts to near-black.
+6. Information architecture
+6.1 Public house (customer)
+Route
+Name in nav
+Role
+/
+Wordmark
+Campaign home
+/shop
+Shop
+Full catalogue + category filter
+/shop?c=womenswear
+—
+Filtered shop
+/product/[slug]
+—
+Product detail + add to bag
+/lookbook
+Lookbook
+Editorial index of the same SKUs
+/about
+The House
+Brand story
+/contact
+Contact
+Studio enquiries
+/cart
+Bag
+Line items, qty, subtotal
+/checkout
+—
+Customer + address, place order
+/order/[id]
+—
+Confirmation / receipt
+The wordmark is the only home link. Bag sits on the right and shows a zero-padded count only when the bag is not empty. There is no Account, Wishlist, or Admin item.
+6.2 Private atelier (staff only)
+Route
+Purpose
+/admin/login
+Password gate. Default password is environment-overridable.
+/admin
+Dashboard: live SKUs, units on hand, order-book value, recent orders, low stock.
+/admin/products
+Catalogue table. Link through to edit.
+/admin/products/new
+Create piece: name, slug, category, prices, copy, images, sizes, stock, featured, published.
+/admin/products/[id]
+Edit or delete a piece.
+/admin/inventory
+Stock-by-size editor for every SKU.
+/admin/orders
+Order list + status pipeline.
+Discovery rule: no public hyperlink points at /admin. Operators bookmark it. Unauthenticated visits to /admin/* redirect to login except the login page itself.
+7. Navbar — detailed specification
+The bar is sticky. Above it sits a one-line announcement: “Complimentary delivery across Nigeria from ₦250,000.” That bar is offer, not navigation.
+SIPSONLEVON (centre wordmark)
+Always routes to /. Letterspaced uppercase serif. This is the house name, not a logo file in v1. Tapping it abandons no bag state; bag lives in the browser.
+Shop
+Opens the full rail. Purpose: convert browsing into a product click. Supporting line on the page states how many pieces are live. Filter pills are not in the navbar because they are shop-local.
+Lookbook
+Magazine, not merchandising. Same products as Shop, presented as a two-column masonry of campaign crops. A click lands on the product page. No prices required on the grid (price appears on the product).
+The House
+About. Hero image plus a short manifesto. No commerce modules. Language is house, not operations (“studio”, not “warehouse”; never “ledger” or “admin”).
+Contact
+Human channel. Name, email, message. Studio hours and hello@sipsonlevon.com. This exists so the navbar does not need a staff login for “talk to us.”
+Bag
+Right-aligned. Label is Bag, never Cart. Count appears as 01, 02… only when qty > 0. Opens /cart. From cart, Checkout is the only next commercial step.
+8. Customer experience — section by section
+8.1 Home
+Hero: full-viewport campaign still, gradient, gold eyebrow “Autumn collection · Lagos”, headline, two CTAs (Shop the season, View lookbook).
+Ticker: repeating house line so the fold is not dead.
+This season: up to four featured products via ProductCard.
+Chapter tiles: Womenswear and Unisex deep-link into filtered shop.
+House band (ink background): manifesto + link to About.
+Also on the rail: non-featured extras.
+Private list: email field. v1 is presentational; persistence of subscribers is a Phase 2 item.
+8.2 Shop and product
+ProductCard shows image, category, name, naira price, optional compare-at strike, Sold through badge when every size is zero. Product page stacks images on the left, sticky buy column on the right. Sizes with zero stock are disabled. Copy reads “N available”, never “in atelier.” Add to bag writes localStorage key sl_cart and broadcasts sl-cart so the header count updates without a refresh.
+8.3 Bag, checkout, order
+Bag hydrates lines from /api/products so names and prices stay true to the current catalogue. Checkout posts customer block + cart lines to POST /api/orders. Server resolves live prices (client cannot invent a price), checks stock, decrements size quantities, assigns an SL- number, sets status to paid, returns the order. Client clears the bag and routes to /order/[id]. Shipping is ₦0 at or above ₦250,000, else ₦8,500.
+8.4 Lookbook, About, Contact
+Lookbook is discovery. About is belief. Contact is service. None of them expose inventory mechanics.
+9. Commerce rules
+Rule
+Behaviour
+Currency
+NGN only. Formatted with en-NG currency style, no kobo.
+Price source
+Server product record. Checkout ignores any client-sent price.
+Stock
+Per size. Order fails with a clear error if a line exceeds remaining units.
+Shipping
+₦8,500 under ₦250,000 subtotal; complimentary at/above.
+Order ID
+SL- prefix, sequential from a base of 1043 + existing count.
+Statuses
+pending, paid, processing, shipped, delivered, cancelled.
+Cancellation
+v1 status flag only; stock is not auto-restored (Phase 2).
+Payments
+v1 marks paid on place-order. Paystack (or equivalent) is Phase 2.
+10. Atelier (admin) — operations document
+Staff authenticate with a shared house password (ADMIN_PASSWORD). Session is an httpOnly cookie compared to ADMIN_TOKEN. Default local values exist for development and must be rotated before any public host is used.
+10.1 Dashboard
+Three numbers: count of SKUs, sum of all size stock, sum of non-cancelled order totals. Recent orders (six). Low stock list: any piece whose total units are 4 or below.
+10.2 Catalogue
+A piece has: id, slug, name, category (womenswear | unisex | tailoring | outerwear), price, optional compareAt, description, fabric, image URL list, sizes[], stock map, featured, published, createdAt. Unpublished pieces disappear from the house but remain in admin. Featured pieces populate the home “This season” rail.
+10.3 Inventory
+Same stock map, edited without opening the full product form. This is the morning tool: receive a delivery, type the new counts, save.
+10.4 Orders
+Each order stores customer snapshot (name, email, phone, address, city, country), line items frozen at purchase (name, size, qty, unit price), subtotal, shipping, total, timestamps, status. Status is the only field operators change day to day.
+11. System architecture (as built)
+11.1 Stack
+Next.js App Router, TypeScript, Tailwind v4.
+Route groups: (store) for the house chrome, admin for the dark desk, api for JSON.
+Persistence: data/store.json created from src/lib/seed.ts on first read. Not a production database.
+Auth: cookie session in src/lib/auth.ts. No customer auth.
+Cart: browser localStorage only.
+11.2 API surface
+Method
+Path
+Who
+Action
+GET
+/api/products
+Public (published only) / Admin (all)
+List catalogue
+POST
+/api/products
+Admin
+Create piece
+PATCH
+/api/products/[id]
+Admin
+Update piece or stock
+DELETE
+/api/products/[id]
+Admin
+Remove piece
+GET
+/api/orders
+Admin
+List orders
+POST
+/api/orders
+Public
+Create order + decrement stock
+PATCH
+/api/orders/[id]
+Admin
+Update status
+POST
+/api/admin/login
+Public
+Set session if password matches
+POST
+/api/admin/logout
+Admin
+Clear session
+11.3 Key modules
+File
+Responsibility
+src/lib/types.ts
+Product, Order, CartItem contracts
+src/lib/seed.ts
+Opening collection + two sample orders
+src/lib/db.ts
+Read/write JSON, stock decrement on createOrder
+src/lib/money.ts
+naira() formatter and uid()
+src/lib/auth.ts
+isAdmin, set/clear cookie, default secrets
+src/components/Header.tsx
+Public nav + footer — no admin links
+src/components/ProductCard.tsx
+Shared merchandising tile
+11.4 Seed collection (opening rail)
+Obsidian Column Dress, Ivory Sculpt Blazer, Sahel Silk Shirt, Night Market Trouser, Lagos Gold Slip, Atelier Trench, Chapel White Shirt, Dusk Wrap Skirt, Copper Knit Polo, Veil Evening Coat. Images are licensed-style Unsplash URLs used as stand-ins until house photography is loaded through admin.
+12. Requirements backlog — MoSCoW
+12.1 Must have (v1 — largely present)
+Multi-page house with Shop, Lookbook, House, Contact, Bag, Checkout.
+Live size-level stock visible and enforced at order time.
+Admin CRUD for products, inventory, orders.
+Admin hidden from customer chrome.
+NGN pricing and Nigerian delivery threshold.
+12.2 Should have (Phase 2)
+Paystack (or Flutterwave) hosted payment; status paid only after webhook.
+Image upload to object storage; stop pasting raw URLs.
+Order-confirmation email to customer and ping to studio.
+Restore stock on cancelled orders.
+Subscriber list persistence for the private-list field.
+Replace JSON file with Postgres.
+Rotate admin secrets; rate-limit login; optional 2FA.
+12.3 Could have (Phase 3)
+Customer accounts and order history.
+Wishlist.
+Editorial journal.
+Appointment booking for fittings.
+Size guide modal and made-to-measure request.
+Multi-currency for diaspora (USD/GBP display, NGN settlement).
+12.4 Won’t have (near term)
+Public comments or ratings on garments.
+Flash-sale countdown modules.
+Chat widgets on first paint.
+13. Non-functional requirements
+Area
+Bar
+Performance
+Home hero must feel instant; images may stay remote in v1 but should be sized.
+Availability
+Single-node is acceptable until Postgres + hosted deploy.
+Security
+Admin cookie httpOnly; no secrets in client bundles; change defaults before deploy.
+Privacy
+Checkout data is order data, not marketing data, until the guest opts into the list.
+Accessibility
+Text contrast on ivory/ink; size buttons keyboardable; images have alt = product name.
+Localisation
+English copy; en-NG numbers; WAT studio hours on Contact.
+SEO
+Per-route titles via Next metadata; noindex should be added to /admin in Phase 2.
+14. Acceptance criteria — founder sign-off
+A stranger can complete Shop → Product → Bag → Checkout → see SL- order without creating an account.
+Choosing a sold-out size is impossible.
+After checkout, that size’s remaining count in admin is lower by the quantity bought.
+View-source / visible nav / footer contain no path or word that reveals a staff desk.
+An operator can add a new piece with two image URLs and see it on /shop after publish.
+An operator can mark an order shipped without touching JSON by hand.
+Prices on bag and confirmation match the server catalogue, not a typed number.
+15. Risks
+JSON file persistence will corrupt or collide under concurrent orders. Blocker for real traffic.
+Unsplash images are not house IP. Replace before press.
+Default admin password will leak if the repo is public.
+“Paid” without a processor trains staff to treat unpaid intent as cash.
+localStorage bags vanish across devices; expected in v1, explain to support.
+16. Launch checklist
+Replace seed photography with SIPSONLEVON shots.
+Confirm legal name, studio address, and hello@ mailbox.
+Set ADMIN_PASSWORD and ADMIN_TOKEN in host env.
+Decide domain and deploy (Vercel or equivalent).
+Add Paystack keys and webhook before advertising checkout as payment.
+Add /admin to robots noindex.
+Walk the acceptance list on a phone and a laptop.
+17. Glossary
+Term
+Meaning in this house
+House
+The public brand and its customer website.
+Atelier / Admin
+Private operations desk. Never named in customer UI.
+Rail
+What is actually in stock and published.
+Piece / SKU
+One garment style with a size-stock map.
+Bag
+Customer cart.
+Drop
+A small seasonal release, not a perpetual catalogue.
+SL- number
+Customer-facing order ID.
+18. Document control
+v1.0 — 21 September 2026 — Initial PRD and system document aligned to the Next.js App Router build in /sipsonlevon. Next revision due when Paystack and Postgres land, or when house photography replaces stand-in imagery.
+This file lives with the product so engineering and the house share one description of reality.

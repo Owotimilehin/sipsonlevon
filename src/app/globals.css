@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/* ── Layer 1: primitives ─────────────────────────────────────────
+   The house's physical facts. Never referenced by a component.   */
+:root {
+  --ink-900: #14110e;
+  --ink-700: #2a251f;
+  --ink-500: #5c5348;
+  --paper-100: #f4efe6;
+  --paper-200: #e8dfd0;
+  --paper-300: #ddd2be;
+  --gold-500: #b89563;
+  --gold-400: #cbae84;
+  --gold-700: #7d5c2e;
+
+  /* ── Layer 2: semantic. What components actually use. ────────── */
+  --color-bg: var(--paper-100);
+  --color-surface: var(--paper-200);
+  --color-surface-deep: var(--paper-300);
+  --color-text: var(--ink-900);
+  --color-text-muted: var(--ink-500);
+  --color-inverse-bg: var(--ink-900);
+  --color-inverse-text: var(--paper-100);
+  --color-accent: var(--gold-500);
+  --color-accent-soft: var(--gold-400);
+  /* Accent that clears 4.5:1 on paper — text, icons, badges on light. */
+  --color-accent-ink: var(--gold-700);
+  --color-border: color-mix(in srgb, var(--ink-900) 12%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--ink-900) 24%, transparent);
+
+  /* ── Motion tokens. Named by feel so motion stays coherent. ───
+     Values derived via the motion-vocabulary translation table.  */
+  --dur-instant: 100ms;
+  --dur-quick: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 600ms;
+  --dur-editorial: 900ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-inout: cubic-bezier(0.77, 0, 0.175, 1);
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --breakpoint-xs: 380px;
+  --color-ink: var(--ink-900);
+  --color-paper: var(--paper-100);
+  --color-gold: var(--gold-500);
+  --color-sand: var(--paper-200);
+
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-deep: var(--color-surface-deep);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-accent: var(--color-accent);
+  --color-accent-ink: var(--color-accent-ink);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+
+  --font-sans: var(--font-outfit);
+  --font-serif: var(--font-cormorant);
+
+  --ease-out: var(--ease-out);
+  --ease-expo: var(--ease-expo);
+  --ease-back: var(--ease-back);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+/* Display type is set, not left at browser defaults:
+   negative tracking + tight leading (anti-slop-design, Typography). */
+h1,
+h2,
+h3,
+.serif {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+.serif-display {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+}
+
+/* The house's signature element: a rule that draws from the left. */
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+}
+
+.rule-draw {
+  position: relative;
+}
+.rule-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 1px;
+  width: 100%;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-slow) var(--ease-expo);
+}
+.rule-draw:hover::after,
+.rule-draw:focus-visible::after,
+.group:hover .rule-draw::after,
+.group:focus-visible .rule-draw::after {
+  transform: scaleX(1);
+}
+
+/* Paper grain — 3% opacity over flat grounds so the ivory reads
+   as stock rather than as #f4efe6 (anti-slop-design, Detail). */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex;
+  animation: slide 32s linear infinite;
+}
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Hero ken-burns. Transform-only: the hero is the LCP element and must
+   never start at opacity 0 (motion-library, Next.js rule 2).
+   Alternating and infinite, so the hero is never frozen — a one-shot
+   settle reads as a static image to anyone who arrives late. */
+@keyframes ken-burns {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.14) translate3d(-1.5%, -1.5%, 0);
+  }
+}
+.drift {
+  animation: ken-burns 24s var(--ease-inout) infinite alternate;
+  transform-origin: 55% 45%;
+  will-change: transform;
+}
+
+/* A one-shot settle would leave the frame mid-zoom; stop it outright. */
+@media (prefers-reduced-motion: reduce) {
+  .drift {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Scroll cue: a hairline that travels down its own track, so the hero
+   says "there is more" without a bouncing chevron. */
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+.cue::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  animation: cue 2600ms var(--ease-inout) infinite;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-text);
+}
+
+input,
+textarea,
+select {
+  border-radius: 0;
+}
+
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Reduce, don't remove: travel goes to zero, opacity survives. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
