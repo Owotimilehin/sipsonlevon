@@ -70,7 +70,7 @@ export const seed: DbShape = {
         "Wide-leg wool trousers with a high rise and a single inverted pleat. Pockets deep enough for a phone and a house key. Black that stays black.",
       fabric: "Tropical wool",
       images: [
-        "https://images.unsplash.com/photo-1509631179647-1f31ab6d0d46?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80",
       ],
       sizes: ["XS", "S", "M", "L", "XL"],
@@ -184,7 +184,7 @@ export const seed: DbShape = {
         "An opera-length coat in black wool with a shawl collar and silk lining the colour of champagne. Designed to leave a room last.",
       fabric: "Double-faced wool, silk lining",
       images: [
-        "https://images.unsplash.com/photo-1548624313-039ee4d73e8f?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80",
       ],
       sizes: ["S", "M", "L"],
