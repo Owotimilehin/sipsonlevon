@@ -67,7 +67,7 @@ async function main() {
     SELECT setval(
       'order_number_seq',
       GREATEST(
-        (SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '\\D', '', 'g'), '')::bigint), 1042)
+        (SELECT COALESCE(MAX(split_part(id, '-', 2)::bigint), 1042)
            FROM orders),
         1042
       )
